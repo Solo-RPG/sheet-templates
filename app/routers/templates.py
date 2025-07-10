@@ -1,4 +1,3 @@
-# app/routers/templates.py
 from fastapi import APIRouter, HTTPException, status
 from app.models import TemplateCreate, TemplateResponse
 from app.database import get_database
@@ -11,7 +10,7 @@ router = APIRouter(
 )
 
 @router.get(
-    "/{system_name}",
+    "/by-name/{system_name}",
     summary="Buscar template por nome do sistema",
     response_model=TemplateResponse,
     responses={
@@ -19,8 +18,7 @@ router = APIRouter(
         500: {"description": "Erro interno no servidor"}
     }
 )
-
-async def get_template(system_name: str):
+async def get_template_by_name(system_name: str):
     try:
         db = get_database()
         template = await db.templates.find_one({"system_name": system_name})
@@ -28,24 +26,82 @@ async def get_template(system_name: str):
         if not template:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Template não encontrado"
+                detail=f"Template com nome '{system_name}' não encontrado"
             )
             
-        template["id"] = str(template["_id"])  # Converte ObjectId para string
         return TemplateResponse(
             id=str(template["_id"]),
             system_name=template["system_name"],
             version=template["version"],
             fields=template["fields"],
-            template_json=template["template_json"]
+            template_json=template.get("template_json")
         )
-
         
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Erro ao buscar template: {str(e)}"
+            detail=f"Erro ao buscar template por nome: {str(e)}"
         )
+
+@router.get(
+    "/by-id/{system_id}",
+    summary="Buscar template por ID",
+    response_model=TemplateResponse,
+    responses={
+        400: {"description": "ID inválido"},
+        404: {"description": "Template não encontrado"},
+        500: {"description": "Erro interno no servidor"}
+    }
+)
+async def get_template_by_id(system_id: str):
+    try:
+        # Validação do ObjectId
+        if not ObjectId.is_valid(system_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="ID do template inválido"
+            )
+
+        db = get_database()
+        template = await db.templates.find_one({"_id": ObjectId(system_id)})
+        
+        if not template:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Template com ID '{system_id}' não encontrado"
+            )
+            
+        return TemplateResponse(
+            id=str(template["_id"]),
+            system_name=template["system_name"],
+            version=template["version"],
+            fields=template["fields"],
+            template_json=template.get("template_json")
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao buscar template por ID: {str(e)}"
+        )
+
+@router.get("/{system_name}/fields")
+async def get_template_fields(system_name: str):
+    db = get_database()
+    # Busca o template pelo nome do sistema
+    template = await db.templates.find_one({"system_name": system_name})
+    if not template:
+        raise HTTPException(404, detail="Template não encontrado")
+    
+    return {
+        # Retorna os campos do template
+        "id": str(template["_id"]),
+        "system_name": template["system_name"],
+        "version": template["version"],
+        "fields": template["fields"],
+    }
 
 @router.get(
     "/",

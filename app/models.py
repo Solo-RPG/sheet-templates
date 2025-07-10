@@ -10,7 +10,7 @@ class TemplateField(BaseModel):
     required: bool = True
     default: Optional[Union[str, int, float, bool, list, dict]] = None
     options: Optional[List[str]] = None
-    fields: Optional[List[TemplateFieldRef]] = None  # Aqui está a recursividade
+    fields: Optional[List["TemplateField"]] = None  # Aqui está a recursividade
 
 # Resolve a referência recursiva
 TemplateField.model_rebuild()
