@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Body, HTTPException, status
 from app.models import TemplateCreate, TemplateResponse
 from app.database import get_database
 from pymongo.errors import DuplicateKeyError
@@ -132,7 +132,60 @@ async def list_templates():
         500: {"description": "Erro interno no servidor"}
     }
 )
-async def create_template(template_data: TemplateCreate):
+async def create_template(template_data: TemplateCreate  = Body(
+        ...,
+        example={
+            "system_name": "D&D 5e",
+            "version": "1.0",
+            "fields": [
+                {
+                    "name": "nome",
+                    "type": "string",
+                    "required": True,
+                    "default": "Novo Personagem"
+                },
+                {
+                    "name": "classe",
+                    "type": "string",
+                    "required": True,
+                    "default": "guerreiro",
+                    "options": ["guerreiro", "mago", "ladino"]
+                },
+                {
+                    "name": "atributos",
+                    "type": "object",
+                    "required": True,
+                    "fields": [
+                        {
+                            "name": "força",
+                            "type": "object",
+                            "required": True,
+                            "fields": [
+                                {"name": "valor", "type": "number", "required": True, "default": 10},
+                                {"name": "bônus", "type": "number", "required": True, "default": 0}
+                            ]
+                        },
+                        {
+                            "name": "destreza",
+                            "type": "object",
+                            "required": True,
+                            "fields": [
+                                {"name": "valor", "type": "number", "required": True, "default": 10},
+                                {"name": "bônus", "type": "number", "required": True, "default": 0}
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "template_json": {
+                "blocos": [
+                    {"titulo": "Identificação", "campos": ["nome", "classe"]},
+                    {"titulo": "Atributos", "campos": ["atributos"]}
+                ]
+            }
+        }
+    )
+):
     try:
         db = get_database()
         
