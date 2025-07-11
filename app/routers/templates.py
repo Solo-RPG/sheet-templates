@@ -5,7 +5,6 @@ from pymongo.errors import DuplicateKeyError
 from bson import ObjectId
 
 router = APIRouter(
-    prefix="/templates",
     tags=["Templates"],  # Adiciona tag para organização no Swagger UI
 )
 

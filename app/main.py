@@ -23,7 +23,7 @@ app = FastAPI(
 )
 
 
-app.include_router(templates.router, prefix="/api")
+app.include_router(templates.router, prefix="/api/templates")
 
 @app.get("/")
 async def health_check():
