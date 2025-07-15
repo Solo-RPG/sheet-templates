@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Body, HTTPException, status
-from app.models import TemplateCreate, TemplateResponse
+from app.models import TemplateCreate, TemplateResponse, TemplateUpdate, TemplateField
 from app.database import get_database
 from pymongo.errors import DuplicateKeyError
 from bson import ObjectId
@@ -217,4 +217,83 @@ async def create_template(template_data: TemplateCreate  = Body(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro ao criar template: {str(e)}"
+        )
+
+@router.delete(
+    "/{system_name}",
+    summary="Excluir um template pelo nome do sistema",
+    responses={
+        404: {"description": "Template não encontrado"},
+        500: {"description": "Erro interno no servidor"}
+    }
+)
+async def delete_template(system_name: str):
+    try:
+        db = get_database()
+        result = await db.templates.delete_one({"system_name": system_name})
+        if result.deleted_count == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Template para sistema {system_name} não encontrado"
+            )
+    except HTTPException:
+        raise  # Re-lança exceções HTTP que já tratamos
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao excluir template: {str(e)}"
+        )
+
+@router.delete(
+    "/by-id/{system_id}",
+    summary="Excluir um template pelo ID",
+    responses={
+        400: {"description": "ID inválido"},
+        404: {"description": "Template não encontrado"},
+        500: {"description": "Erro interno no servidor"}
+    }
+)
+async def delete_template_by_id(system_id: str):
+    try:
+        db = get_database()
+        result = await db.templates.delete_one({"_id": ObjectId(system_id)})
+        if result.deleted_count == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Template com ID {system_id} não encontrado"
+            )
+    except HTTPException:
+        raise  # Re-lança exceções HTTP que já tratamos
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao excluir template: {str(e)}"
+        )
+
+@router.put(
+    "/{system_name}",
+    summary="Atualizar um template pelo nome do sistema",
+    response_model=TemplateResponse,
+    responses={
+        404: {"description": "Template não encontrado"},
+        400: {"description": "Dados inválidos ou duplicados"},
+        500: {"description": "Erro interno no servidor"}
+    }
+)
+async def update_template(system_name: str, template_data: TemplateUpdate):
+    try:
+        db = get_database()
+        result = await db.templates.update_one({"system_name": system_name}, {"$set": template_data.model_dump()})
+        if result.modified_count == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Template para sistema {system_name} não encontrado"
+            )
+        return TemplateResponse(**template_data.model_dump(), system_name=system_name)
+    except HTTPException:
+        raise  # Re-lança exceções HTTP que já tratamos
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao atualizar template: {str(e)}"
         )

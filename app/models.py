@@ -27,4 +27,10 @@ class TemplateResponse(BaseModel):
     version: str
     fields: List[TemplateField]
     template_json: Dict[str, Any]
+
+class TemplateUpdate(BaseModel):
+    system_name: Optional[str] = Field(None, min_length=3, description="Nome do sistema RPG")
+    version: Optional[str] = Field(None, description="Versão do template")
+    fields: Optional[List[TemplateField]] = None
+    template_json: Optional[Dict[str, Any]] = None
     
