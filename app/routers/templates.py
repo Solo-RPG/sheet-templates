@@ -186,8 +186,10 @@ async def create_template(template_data: TemplateCreate  = Body(
         }
     )
 ):
+    print("📥 Dados recebidos:", template_data)
     try:
         db = get_database()
+        print("📦 Conexão com DB:", db)
         
         # Usa model_dump() em vez de dict() para Pydantic v2
         template_dict = template_data.model_dump()

@@ -4,6 +4,8 @@ from app.database import connect_to_mongo, close_mongo_connection
 import logging
 from app.routers import templates
 
+from fastapi.middleware.cors import CORSMiddleware
+
 logger = logging.getLogger(__name__)
 
 @asynccontextmanager
@@ -22,6 +24,12 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # URL do seu Next.js
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(templates.router, prefix="/api/templates")
 
