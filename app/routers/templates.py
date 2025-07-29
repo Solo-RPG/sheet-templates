@@ -3,6 +3,8 @@ from app.models import TemplateCreate, TemplateResponse, TemplateUpdate, Templat
 from app.database import get_database
 from pymongo.errors import DuplicateKeyError
 from bson import ObjectId
+from datetime import datetime
+from pydantic import ValidationError
 
 router = APIRouter(
     tags=["Templates"],  # Adiciona tag para organização no Swagger UI
@@ -273,27 +275,67 @@ async def delete_template_by_id(system_id: str):
         )
 
 @router.put(
-    "/{system_name}",
-    summary="Atualizar um template pelo nome do sistema",
+    "/{template_id}",  # Agora usando template_id como parâmetro
+    summary="Atualizar um template pelo ID",
     response_model=TemplateResponse,
     responses={
         404: {"description": "Template não encontrado"},
         400: {"description": "Dados inválidos ou duplicados"},
+        422: {"description": "Erro de validação"},
         500: {"description": "Erro interno no servidor"}
     }
 )
-async def update_template(system_name: str, template_data: TemplateUpdate):
+async def update_template(template_id: str, template_data: TemplateUpdate):
     try:
+        # Validação do ObjectId
+        if not ObjectId.is_valid(template_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="ID do template inválido"
+            )
+
         db = get_database()
-        result = await db.templates.update_one({"system_name": system_name}, {"$set": template_data.model_dump()})
-        if result.modified_count == 0:
+        
+        # Verificar se o template existe
+        existing = await db.templates.find_one({"_id": ObjectId(template_id)})
+        if not existing:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Template para sistema {system_name} não encontrado"
+                detail=f"Template com ID {template_id} não encontrado"
             )
-        return TemplateResponse(**template_data.model_dump(), system_name=system_name)
+        
+        # Atualizar template
+        update_data = template_data.model_dump(exclude_unset=True)
+        update_data["updated_at"] = datetime.utcnow()
+        
+        result = await db.templates.update_one(
+            {"_id": ObjectId(template_id)},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Nenhuma alteração foi realizada"
+            )
+        
+        # Retornar os dados atualizados
+        updated_template = {**existing, **update_data}
+        updated_template["id"] = str(updated_template["_id"])
+        return TemplateResponse(**updated_template)
+        
+    except ValidationError as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "errors": {
+                    field: [error["msg"] for error in errors]
+                    for field, errors in e.errors()
+                }
+            }
+        )
     except HTTPException:
-        raise  # Re-lança exceções HTTP que já tratamos
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
