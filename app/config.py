@@ -3,7 +3,7 @@ from pathlib import Path
 
 class Settings(BaseSettings):
     # Configurações padrão (podem ser sobrescritas pelo .env)
-    MONGODB_URL: str = "mongodb://localhost:27017"
+    MONGODB_URL: str = "mongodb+srv://dbUser:1234@clustersolorpg.d5uz3ft.mongodb.net/?retryWrites=true&w=majority&appName=ClusterSoloRPG"
     MONGODB_NAME: str = "sheet-models"
     API_PORT: int = 7000
     
