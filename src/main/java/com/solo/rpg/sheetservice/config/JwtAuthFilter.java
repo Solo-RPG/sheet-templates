@@ -45,7 +45,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = header.substring(7);
         try {
             Claims claims = jwtValidator.validateToken(token);
-            String username = claims.getSubject();
 
             // Extrai roles da claim "roles" (lista de strings)
             List<String> roles = claims.get("roles", List.class);

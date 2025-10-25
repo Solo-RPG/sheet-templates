@@ -43,7 +43,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/error"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/api/sheets").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/api/templates").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
