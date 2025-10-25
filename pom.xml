@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.solo.rpg</groupId>
-	<artifactId>templateService</artifactId>
+	<artifactId>sheetService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>templateService</name>
-	<description>Serviço de Templates do Solo RPG Web App</description>
+	<name>sheetService</name>
+	<description>Serviço de Fichas do Solo RPG Web App</description>
 	<url/>
 	<licenses>
 		<license/>
