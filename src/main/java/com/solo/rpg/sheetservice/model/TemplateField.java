@@ -10,13 +10,14 @@ public class TemplateField {
     private String flex;
     private String span;
     private String cols;
+    private String color;
     private List<String> options;
     private List<TemplateField> fields;
 
     public TemplateField() {
     }
 
-    public TemplateField(String name, String type, boolean required, String defaultValue, List<String> options, List<TemplateField> fields, String flex, String span, String cols) {
+    public TemplateField(String name, String type, boolean required, String defaultValue, List<String> options, List<TemplateField> fields, String flex, String span, String cols, String color) {
         this.name = name;
         this.type = type;
         this.required = required;
@@ -26,7 +27,7 @@ public class TemplateField {
         this.fields = fields;
         this.span = span;
         this.cols = cols;
-
+        this.color = color;
     }
 
     public List<TemplateField> getFields() {
@@ -88,4 +89,8 @@ public class TemplateField {
     public String getCols() { return cols;}
 
     public void setCols(String cols) { this.cols = cols; }
+
+    public String getColor() { return color; }
+
+    public void setColor(String color) { this.color = color; }
 }
