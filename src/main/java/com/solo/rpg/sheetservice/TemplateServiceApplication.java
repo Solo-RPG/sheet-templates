@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SheetServiceApplication {
+public class TemplateServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SheetServiceApplication.class, args);
+		SpringApplication.run(TemplateServiceApplication.class, args);
 	}
 
 }

@@ -3,6 +3,7 @@ package com.solo.rpg.sheetservice.controller;
 
 import com.solo.rpg.sheetservice.model.Template;
 import com.solo.rpg.sheetservice.service.TemplateService;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,14 @@ public class TemplateController {
         return ResponseEntity.ok(service.getAllTemplates());
     }
 
+    @GetMapping("/by-id")
+    private ResponseEntity<List<Template>> getTemplatesByID() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Claims claims = (Claims) auth.getPrincipal();
+        String userId = claims.get("userId", String.class);
+        return ResponseEntity.ok(service.getAllTemplatesById(userId));
+    }
+
     @GetMapping("/by-name/{systemName}")
     private ResponseEntity<Template> getTemplatesByName(@PathVariable String systemName) {
         return ResponseEntity.ok(service.getTemplateByName(systemName));
@@ -33,6 +42,8 @@ public class TemplateController {
 
     @GetMapping("/by-id/{id}")
     private ResponseEntity<Template> getTemplatesById(@PathVariable String id) {
+
+        System.out.printf("id: %s\n", id);
         Template template = service.getTemplateById(id);
 
         if (template == null) {
@@ -57,9 +68,11 @@ public class TemplateController {
 
     @PostMapping("/")
     public ResponseEntity<Template> createTemplate(@RequestBody Template template) {
-
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Claims claims = (Claims) auth.getPrincipal();
+        String userId = claims.get("userId", String.class);
         try {
-            return ResponseEntity.ok(service.createTemplate(template));
+            return ResponseEntity.ok(service.createTemplate(template, userId));
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }
@@ -80,6 +93,9 @@ public class TemplateController {
     @PutMapping("/{id}")
     public ResponseEntity<Template> updateTemplate(@PathVariable String id, @RequestBody Template updatedTemplate) {
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Claims claims = (Claims) auth.getPrincipal();
+        String userId = claims.get("userId", String.class);
 
         Template existingTemplate = service.getTemplateById(id);
 
@@ -90,6 +106,6 @@ public class TemplateController {
         deleteTemplate(existingTemplate.getSystemName());
         updatedTemplate.setId(existingTemplate.getId());
 
-        return ResponseEntity.ok(service.createTemplate(updatedTemplate));
+        return ResponseEntity.ok(service.createTemplate(updatedTemplate, userId));
     }
 }

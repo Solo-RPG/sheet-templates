@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public class Template {
     private String id;
+    private String ownerId;
     private String systemName;
     private String version;
     private List<TemplateField> fields;
@@ -53,5 +54,11 @@ public class Template {
     }
     public void setId(String id) {
         this.id = id;
+    }
+    public String getOwnerId() {
+        return ownerId;
+    }
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 }
