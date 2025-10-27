@@ -1,4 +1,4 @@
-package com.solo.rpg.sheetservice.model;
+package com.solo.rpg.templateservice.model;
 
 import net.minidev.json.JSONObject;
 

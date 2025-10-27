@@ -1,4 +1,4 @@
-package com.solo.rpg.sheetservice.config;
+package com.solo.rpg.templateservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

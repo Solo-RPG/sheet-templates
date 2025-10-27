@@ -1,11 +1,10 @@
-package com.solo.rpg.sheetservice.service;
+package com.solo.rpg.templateservice.service;
 
-import com.solo.rpg.sheetservice.model.Template;
-import com.solo.rpg.sheetservice.repository.TemplateRepository;
+import com.solo.rpg.templateservice.model.Template;
+import com.solo.rpg.templateservice.repository.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service

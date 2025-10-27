@@ -1,4 +1,4 @@
-package com.solo.rpg.sheetservice.config;
+package com.solo.rpg.templateservice.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

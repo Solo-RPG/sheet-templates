@@ -1,5 +1,5 @@
 
-package com.solo.rpg.sheetservice.config;
+package com.solo.rpg.templateservice.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpRequest;

@@ -1,6 +1,6 @@
-package com.solo.rpg.sheetservice.repository;
+package com.solo.rpg.templateservice.repository;
 
-import com.solo.rpg.sheetservice.model.Template;
+import com.solo.rpg.templateservice.model.Template;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

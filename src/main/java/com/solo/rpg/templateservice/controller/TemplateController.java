@@ -1,17 +1,15 @@
-package com.solo.rpg.sheetservice.controller;
+package com.solo.rpg.templateservice.controller;
 
 
-import com.solo.rpg.sheetservice.model.Template;
-import com.solo.rpg.sheetservice.service.TemplateService;
+import com.solo.rpg.templateservice.model.Template;
+import com.solo.rpg.templateservice.service.TemplateService;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
