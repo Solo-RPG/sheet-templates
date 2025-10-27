@@ -18,6 +18,13 @@ WORKDIR /app
 
 # Copiar o JAR compilado
 COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8000
 
-# Definir o comando de entrada
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# FIX PRINCIPAL: Configurar variáveis de ambiente necessárias
+# A aplicação precisa destas variáveis para iniciar
+ENV SERVER_PORT=8000
+
+# Iniciar a aplicação com as propriedades corretas
+# Spring Boot automaticamente converte variáveis de ambiente UPPER_SNAKE_CASE
+# para propriedades application.property.format
+ENTRYPOINT ["java", "-Dserver.port=8000", "-jar", "app.jar"]
