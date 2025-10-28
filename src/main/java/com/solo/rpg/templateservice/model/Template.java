@@ -10,6 +10,7 @@ public class Template {
     private String ownerId;
     private String systemName;
     private String version;
+    private String cols;
     private List<TemplateField> fields;
     private JSONObject templateJson;
 
@@ -17,12 +18,13 @@ public class Template {
         this.id = UUID.randomUUID().toString();
     }
 
-    public Template(String systemName, String version, List<TemplateField> fields, JSONObject templateJson) {
+    public Template(String systemName, String version, List<TemplateField> fields, JSONObject templateJson, String cols) {
         this.id = UUID.randomUUID().toString();
         this.systemName = systemName;
         this.version = version;
         this.fields = fields;
         this.templateJson = templateJson;
+        this.cols = cols;
     }
 
     public String getSystemName() {
@@ -60,5 +62,11 @@ public class Template {
     }
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
+    }
+    public String getCols() {
+        return cols;
+    }
+    public void setCols(String cols) {
+        this.cols = cols;
     }
 }
